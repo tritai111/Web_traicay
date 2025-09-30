@@ -1,0 +1,34 @@
+<!-- /*Danh sách sản phẩm*/ -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dach sách sản phẩm</title>
+    <link rel="stylesheet" href="../css/components/product.css" />
+  </head>
+  <body>
+    <h1>Banana</h1>
+    <div class="product-list" id="productList"></div>
+
+    <script>
+      fetch("products.json")
+        .then((res) => res.json())
+        .then((products) => {
+          const list = document.getElementById("productList");
+          products.forEach((product) => {
+            const item = document.createElement("div");
+            item.className = "product";
+            item.innerHTML = `
+            <a href="product.html?id=${product.id}">
+              <img src="${product.image}" alt="${product.name}">
+              <h3>${product.name}</h3>
+              <p>${product.price}</p>
+            </a>
+          `;
+            list.appendChild(item);
+          });
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "name": "Banana",
+    "image": "../images/banana_duct_taped_to_the_wall.glb",
+    "price": "2000000000",
+    "description": "Chuối cao cấp"
+  }
+]

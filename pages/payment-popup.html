@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Thanh toán</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+      body {
+        width: 420px;
+        padding: 20px;
+        background: #fff;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .header h2 {
+        color: #d32f2f;
+      }
+      .close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+      }
+      .product {
+        background: #fdf6f6;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+      .total {
+        text-align: right;
+        font-size: 18px;
+        font-weight: bold;
+        color: #d32f2f;
+        margin: 15px 0;
+      }
+      .methods {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 20px 0;
+      }
+      .method {
+        padding: 12px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .method.selected {
+        border-color: #d32f2f;
+        background: #fff5f5;
+      }
+      .btn {
+        width: 100%;
+        padding: 12px;
+        background: #d32f2f;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h2>🛒 Thanh toán</h2>
+      <button class="close" onclick="window.close()">×</button>
+    </div>
+
+    <div id="content">
+      <!-- Sẽ được điền bằng JS -->
+    </div>
+
+    <script>
+      // Lấy sản phẩm đang thanh toán (mua trực tiếp)
+      const directProduct = JSON.parse(localStorage.getItem("paymentProduct"));
+
+      // Lấy giỏ hàng
+      const cartFromStorage = JSON.parse(localStorage.getItem("cart")) || [];
+
+      // Xác định nguồn dữ liệu
+      let cartToDisplay = [];
+      let isDirectPurchase = false;
+
+      if (directProduct) {
+        // Mua trực tiếp → dùng sản phẩm này
+        cartToDisplay = [directProduct];
+        isDirectPurchase = true;
+        // Xóa luôn để tránh dùng lại
+        localStorage.removeItem("paymentProduct");
+      } else {
+        // Mở từ giỏ hàng → dùng toàn bộ giỏ
+        cartToDisplay = cartFromStorage;
+      }
+
+      const contentDiv = document.getElementById("content");
+
+      if (cartToDisplay.length === 0) {
+        contentDiv.innerHTML = "<p>Không có sản phẩm để thanh toán.</p>";
+        return;
+      }
+
+      // Tính tổng tiền & tạo HTML
+      let total = 0;
+      let productsHTML = '<div class="products-list">';
+
+      cartToDisplay.forEach((item) => {
+        const priceNum = parseFloat(item.price) || 0;
+        const itemTotal = priceNum * (item.qty || 1);
+        total += itemTotal;
+
+        const priceStr = priceNum.toLocaleString("vi-VN") + " VNĐ";
+        productsHTML += `
+      <div class="product-item">
+        <span>${item.name} × ${item.qty || 1}</span>
+        <span>${itemTotal.toLocaleString("vi-VN")} VNĐ</span>
+      </div>
+    `;
+      });
+
+      productsHTML += `</div>`;
+      productsHTML += `<div class="total">Tổng: ${total.toLocaleString(
+        "vi-VN"
+      )} VNĐ</div>`;
+
+      // Phương thức thanh toán
+      productsHTML += `
+    <div class="methods">
+      <div class="method selected" data-method="momo">
+        <i class="fas fa-wallet"></i> Ví Momo
+      </div>
+      <div class="method" data-method="vietcombank">
+        <i class="fas fa-landmark"></i> Vietcombank
+      </div>
+      <div class="method" data-method="vnpay">
+        <i class="fas fa-qrcode"></i> VNPay
+      </div>
+    </div>
+    <button class="btn" onclick="confirmPayment(${isDirectPurchase})">Xác nhận thanh toán</button>
+  `;
+
+      contentDiv.innerHTML = productsHTML;
+
+      // Xử lý chọn phương thức
+      document.querySelectorAll(".method").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".method")
+            .forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+        });
+      });
+
+      // Hàm xác nhận thanh toán
+      window.confirmPayment = function (isDirect) {
+        const method =
+          document.querySelector(".method.selected")?.dataset.method;
+        if (!method) {
+          alert("Vui lòng chọn phương thức thanh toán!");
+          return;
+        }
+
+        if (isDirect) {
+          // Mua trực tiếp → không ảnh hưởng giỏ hàng
+          alert(`✅ Thanh toán thành công!`);
+        } else {
+          // Thanh toán từ giỏ → xóa toàn bộ giỏ
+          localStorage.removeItem("cart");
+          if (window.opener) {
+            const cartCount =
+              window.opener.document.querySelector(".cart-count");
+            if (cartCount) cartCount.textContent = "0";
+          }
+          alert(`✅ Đã thanh toán toàn bộ giỏ hàng!`);
+        }
+
+        setTimeout(() => window.close(), 1000);
+      };
+    </script>
+  </body>
+</html>
