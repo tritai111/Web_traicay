@@ -101,8 +101,9 @@ document
   });
 // thanh toán giỏ hàng
 // Xử lý nút "THANH TOÁN GIỎ HÀNG"
+document;
 document
-  .querySelector(".checkout-cart-btn")
+  .querySelector(".checkout-cart-btn.nav-button")
   ?.addEventListener("click", function () {
     const currentUser = localStorage.getItem("currentUser");
     if (!currentUser) {

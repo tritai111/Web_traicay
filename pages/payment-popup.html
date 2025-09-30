@@ -89,24 +89,37 @@
     </div>
 
     <script>
-      // Lấy sản phẩm đang thanh toán (mua trực tiếp)
-      const directProduct = JSON.parse(localStorage.getItem("paymentProduct"));
+      // Lấy sản phẩm đang thanh toán (an toàn)
+      let directProduct = null;
+      const paymentData = localStorage.getItem("paymentProduct");
+      if (paymentData) {
+        try {
+          directProduct = JSON.parse(paymentData);
+        } catch (e) {
+          console.error("Lỗi parse paymentProduct:", e);
+        }
+      }
 
-      // Lấy giỏ hàng
-      const cartFromStorage = JSON.parse(localStorage.getItem("cart")) || [];
+      // Lấy giỏ hàng (an toàn)
+      let cartFromStorage = [];
+      const cartData = localStorage.getItem("cart");
+      if (cartData) {
+        try {
+          cartFromStorage = JSON.parse(cartData);
+        } catch (e) {
+          console.error("Lỗi parse cart:", e);
+        }
+      }
 
       // Xác định nguồn dữ liệu
       let cartToDisplay = [];
       let isDirectPurchase = false;
 
       if (directProduct) {
-        // Mua trực tiếp → dùng sản phẩm này
         cartToDisplay = [directProduct];
         isDirectPurchase = true;
-        // Xóa luôn để tránh dùng lại
         localStorage.removeItem("paymentProduct");
       } else {
-        // Mở từ giỏ hàng → dùng toàn bộ giỏ
         cartToDisplay = cartFromStorage;
       }
 
@@ -114,59 +127,58 @@
 
       if (cartToDisplay.length === 0) {
         contentDiv.innerHTML = "<p>Không có sản phẩm để thanh toán.</p>";
-        return;
-      }
+      } else {
+        // Tính tổng tiền & tạo HTML
+        let total = 0;
+        let productsHTML = '<div class="products-list">';
 
-      // Tính tổng tiền & tạo HTML
-      let total = 0;
-      let productsHTML = '<div class="products-list">';
+        cartToDisplay.forEach((item) => {
+          const priceNum = parseFloat(item.price) || 0;
+          const itemTotal = priceNum * (item.qty || 1);
+          total += itemTotal;
 
-      cartToDisplay.forEach((item) => {
-        const priceNum = parseFloat(item.price) || 0;
-        const itemTotal = priceNum * (item.qty || 1);
-        total += itemTotal;
-
-        const priceStr = priceNum.toLocaleString("vi-VN") + " VNĐ";
-        productsHTML += `
-      <div class="product-item">
-        <span>${item.name} × ${item.qty || 1}</span>
-        <span>${itemTotal.toLocaleString("vi-VN")} VNĐ</span>
-      </div>
-    `;
-      });
-
-      productsHTML += `</div>`;
-      productsHTML += `<div class="total">Tổng: ${total.toLocaleString(
-        "vi-VN"
-      )} VNĐ</div>`;
-
-      // Phương thức thanh toán
-      productsHTML += `
-    <div class="methods">
-      <div class="method selected" data-method="momo">
-        <i class="fas fa-wallet"></i> Ví Momo
-      </div>
-      <div class="method" data-method="vietcombank">
-        <i class="fas fa-landmark"></i> Vietcombank
-      </div>
-      <div class="method" data-method="vnpay">
-        <i class="fas fa-qrcode"></i> VNPay
-      </div>
-    </div>
-    <button class="btn" onclick="confirmPayment(${isDirectPurchase})">Xác nhận thanh toán</button>
-  `;
-
-      contentDiv.innerHTML = productsHTML;
-
-      // Xử lý chọn phương thức
-      document.querySelectorAll(".method").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          document
-            .querySelectorAll(".method")
-            .forEach((b) => b.classList.remove("selected"));
-          btn.classList.add("selected");
+          const priceStr = priceNum.toLocaleString("vi-VN") + " VNĐ";
+          productsHTML += `
+        <div class="product-item">
+          <span>${item.name} × ${item.qty || 1}</span>
+          <span>${itemTotal.toLocaleString("vi-VN")} VNĐ</span>
+        </div>
+      `;
         });
-      });
+
+        productsHTML += `</div>`;
+        productsHTML += `<div class="total">Tổng: ${total.toLocaleString(
+          "vi-VN"
+        )} VNĐ</div>`;
+
+        // Phương thức thanh toán
+        productsHTML += `
+      <div class="methods">
+        <div class="method selected" data-method="momo">
+          <i class="fas fa-wallet"></i> Ví Momo
+        </div>
+        <div class="method" data-method="vietcombank">
+          <i class="fas fa-landmark"></i> Vietcombank
+        </div>
+        <div class="method" data-method="vnpay">
+          <i class="fas fa-qrcode"></i> VNPay
+        </div>
+      </div>
+      <button class="btn" onclick="confirmPayment(${isDirectPurchase})">Xác nhận thanh toán</button>
+    `;
+
+        contentDiv.innerHTML = productsHTML;
+
+        // Xử lý chọn phương thức
+        document.querySelectorAll(".method").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            document
+              .querySelectorAll(".method")
+              .forEach((b) => b.classList.remove("selected"));
+            btn.classList.add("selected");
+          });
+        });
+      }
 
       // Hàm xác nhận thanh toán
       window.confirmPayment = function (isDirect) {
@@ -178,10 +190,8 @@
         }
 
         if (isDirect) {
-          // Mua trực tiếp → không ảnh hưởng giỏ hàng
           alert(`✅ Thanh toán thành công!`);
         } else {
-          // Thanh toán từ giỏ → xóa toàn bộ giỏ
           localStorage.removeItem("cart");
           if (window.opener) {
             const cartCount =

@@ -56,3 +56,18 @@ document.addEventListener("DOMContentLoaded", updateAuthUI);
 function toggleLayout() {
   document.querySelector(".container").classList.toggle("active");
 }
+// Thêm hàm này vào main.js
+function updateCartUI() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  const cartCount = document.querySelector(".cart-count");
+  if (cartCount) {
+    cartCount.textContent = totalItems;
+  }
+}
+
+// Gọi khi load trang (thêm vào cuối file)
+document.addEventListener("DOMContentLoaded", function () {
+  updateAuthUI();
+  updateCartUI(); // ← Thêm dòng này
+});
