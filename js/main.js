@@ -71,3 +71,17 @@ document.addEventListener("DOMContentLoaded", function () {
   updateAuthUI();
   updateCartUI(); // ← Thêm dòng này
 });
+
+// Xử lý mở popup giỏ hàng
+document
+  .getElementById("openCartPopup")
+  ?.addEventListener("click", function () {
+    const popup = window.open(
+      "../pages/cart-popup.html",
+      "cart_popup",
+      "width=450,height=500,resizable,scrollbars"
+    );
+    if (!popup) {
+      alert("Vui lòng cho phép popup để xem giỏ hàng!");
+    }
+  });
