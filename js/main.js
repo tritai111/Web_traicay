@@ -97,6 +97,7 @@ function closeCartDrawer() {
   document.getElementById("cartDrawer").classList.remove("active");
   document.getElementById("cartOverlay").style.display = "none";
 }
+/*Dang nhap moi co the thanh toan*/
 function renderCartDrawer() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
   const contentDiv = document.getElementById("cartDrawerContent");
@@ -104,11 +105,11 @@ function renderCartDrawer() {
 
   if (cart.length === 0) {
     contentDiv.innerHTML = `
-        <div class="empty-cart">
-          <i class="fas fa-shopping-cart"></i>
-          <p>Giỏ hàng của bạn đang trống</p>
-        </div>
-      `;
+      <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <p>Giỏ hàng của bạn đang trống</p>
+      </div>
+    `;
     footerDiv.innerHTML = "";
     return;
   }
@@ -122,43 +123,54 @@ function renderCartDrawer() {
     total += itemTotal;
 
     itemsHTML += `
-        <div class="cart-item" data-id="${item.id}">
-          <div class="item-image">
-            <i class="fas fa-shopping-bag"></i>
-          </div>
-          <div class="item-info">
-            <div class="item-name">${item.name}</div>
-            <div class="item-price">${priceNum.toLocaleString(
-              "vi-VN"
-            )} VNĐ</div>
-            <div class="quantity-controls">
-              <button class="qty-btn" onclick="updateQtyInDrawer(${
-                item.id
-              }, -1)">-</button>
-              <span class="quantity">${item.qty}</span>
-              <button class="qty-btn" onclick="updateQtyInDrawer(${
-                item.id
-              }, 1)">+</button>
-              <button class="remove-btn" onclick="removeItemInDrawer(${
-                item.id
-              })">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
+      <div class="cart-item" data-id="${item.id}">
+        <div class="item-image">
+          <i class="fas fa-shopping-bag"></i>
+        </div>
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-price">${priceNum.toLocaleString("vi-VN")} VNĐ</div>
+          <div class="quantity-controls">
+            <button class="qty-btn" onclick="updateQtyInDrawer(${
+              item.id
+            }, -1)">-</button>
+            <span class="quantity">${item.qty}</span>
+            <button class="qty-btn" onclick="updateQtyInDrawer(${
+              item.id
+            }, 1)">+</button>
+            <button class="remove-btn" onclick="removeItemInDrawer(${item.id})">
+              <i class="fas fa-trash"></i>
+            </button>
           </div>
         </div>
-      `;
+      </div>
+    `;
   });
 
   contentDiv.innerHTML = itemsHTML;
 
-  footerDiv.innerHTML = `
+  // Kiểm tra đăng nhập
+  const isLoggedIn = localStorage.getItem("currentUser") !== null;
+
+  if (isLoggedIn) {
+    footerDiv.innerHTML = `
       <div class="total-section">
         <span class="total-label">Tổng cộng:</span>
         <span class="total-amount">${total.toLocaleString("vi-VN")} VNĐ</span>
       </div>
       <button class="checkout-btn" onclick="checkoutFromDrawer()">Thanh toán</button>
     `;
+  } else {
+    footerDiv.innerHTML = `
+      <div class="total-section">
+        <span class="total-label">Tổng cộng:</span>
+        <span class="total-amount">${total.toLocaleString("vi-VN")} VNĐ</span>
+      </div>
+      <button class="checkout-btn" style="background:#ccc; cursor:not-allowed;" disabled>
+        Vui lòng đăng nhập để thanh toán
+      </button>
+    `;
+  }
 }
 
 // Các hàm xử lý trong drawer
