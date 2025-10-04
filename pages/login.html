@@ -36,8 +36,14 @@
             required
           />
         </div>
+        <div class="input-group" id="passwordGroup" style="display: none">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" placeholder="Nhập mật khẩu..." />
+        </div>
         <div class="status-hint" id="statusHint"></div>
-        <button type="submit" class="login-button">Continue</button>
+        <button type="submit" class="login-button" id="submitBtn">
+          Continue
+        </button>
       </form>
 
       <div class="divider"><span>or continue with</span></div>
@@ -52,8 +58,11 @@
       </div>
 
       <a href="../pages/index.html" class="back-home">
-        <i class="fas fa-arrow-left"></i> Back to home
-      </a>
+        <i class="fas fa-arrow-left"></i> Back to home </a
+      ><br />
+      <a href="../pages/admin-login.html" class="admin-link"
+        >Đăng nhập dành cho Admin</a
+      >
     </di>
 
     <script src="../js/auth.js"></script>

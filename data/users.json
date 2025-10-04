@@ -1,0 +1,9 @@
+{
+  "admin@gmail.com": {
+    "name": "Admin",
+    "email": "admin@gmail.com",
+    "password": "123456",
+    "phone": "0123456789",
+    "join_date": "2025-10-01"
+  }
+}

@@ -1,0 +1,140 @@
+/* css/base.css */
+:root {
+  /* Màu sắc chủ đạo */
+  --primary-color: #d32f2f;
+  --primary-dark: #a52a2a;
+  --primary-light: #f9cbd6;
+  --secondary-color: #9e182b;
+  --accent-color: #ffd700;
+  --accent-dark: #ffa500;
+
+  /* Màu chữ */
+  --text-color: #212121;
+  --text-light: #fbdede;
+  --text-white: #ffffff;
+
+  /* Màu nền */
+  --bg-primary: #ffffff;
+  --bg-light: #f9cbd6;
+  --bg-overlay: rgba(0, 0, 0, 0.2);
+
+  /* Khoảng cách */
+  --spacing-xs: 6px;
+  --spacing-sm: 10px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 40px;
+
+  /* Bo tròn */
+  --border-radius-sm: 6px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 20px;
+  --border-radius-full: 50%;
+
+  /* Đường viền */
+  --border-color: #f0e6e6;
+  --border-hover: #d32f2f;
+
+  /* Bóng */
+  --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  /* Chuyển động */
+  --transition-fast: 0.2s;
+  --transition-normal: 0.3s;
+  --transition-slow: 0.5s;
+
+  /* Font chữ */
+  --font-primary: "Helvetica Neue", Arial, sans-serif;
+  --font-secondary: "Georgia", serif;
+  --font-special: "Pacifico", cursive;
+}
+
+/* Reset cơ bản */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background: var(--bg-light);
+  color: var(--text-color);
+}
+
+/* Font đặc biệt */
+.pacifico-regular {
+  font-family: var(--font-special);
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Nút chung */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  background: var(--primary-color);
+  color: var(--text-white);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Nút đặc biệt */
+.btn-accent {
+  background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+  color: #8b4513;
+}
+
+.btn-accent:hover {
+  background: linear-gradient(135deg, var(--accent-dark), #ff8c00);
+}
+
+/* Form input */
+.form-input {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-size: 16px;
+  outline: none;
+  transition: all var(--transition-normal);
+  background: var(--bg-primary);
+}
+
+.form-input:hover {
+  border-color: var(--border-hover);
+}
+
+.form-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.25);
+}
+
+/* Responsive chung */
+@media (max-width: 768px) {
+  :root {
+    --spacing-lg: 16px;
+    --spacing-xl: 24px;
+    --spacing-xxl: 32px;
+  }
+}

@@ -1,0 +1,43 @@
+    <!DOCTYPE html>
+    <html lang="vi">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="../css/admin_index.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    </head>
+
+    <body>
+
+        <div class = "container">
+            <div class="item header">
+                <h1>admin page</h1>
+                <button class="menu-btn" onclick="location.href='../pages/index.html'"> <i class="fa-solid fa-house"> </i> </button>
+
+            </div>
+            <div class="item selection">
+                <ul>
+                    <li class="selection"><button>quản lý sản phẩm</button></li>
+                    <li class="selection"><button>quản lý người dùng</button></li>
+                    <li class="selection"><button>quản lý nhập sản phẩm</button></li>
+                </ul>
+            </div>
+            <div class="item content">
+                <div class="admin-profile">
+                    <img src="../images/admin.png" alt="Admin Avatar" class="avatar">
+                        <div class="admin-info">
+                            <h2>Tên admin: <span id="currentUser"></span> </h2>
+                            <p><strong>Email:</strong> <span id = "currentUserEmail"></span></p>
+                            <p><strong>Số điện thoại:</strong> <span id ="currentPhoneNumber"></span></p>
+                            <p><strong>Ngày tham gia:</strong> <span id = "dateJoin"></span></p>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+
+
+    </html>
