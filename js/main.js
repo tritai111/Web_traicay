@@ -49,7 +49,7 @@ userToggle.addEventListener("click", function (e) {
   if (isLoggedIn) {
     dropdownMenu.classList.toggle("show");
   } else {
-    window.location.href = "pages/login.html";
+    window.location.href = "../pages/login.html";
   }
 });
 
@@ -87,7 +87,7 @@ function updateCartUI() {
   }
 }
 
-// Render giỏ hàng trong drawer
+// Render giỏ hàng trong drawer (KHÔNG CÓ HÌNH ẢNH)
 function renderCartDrawer() {
   const cart = getCurrentUserCart();
   const contentDiv = document.getElementById("cartDrawerContent");
@@ -114,15 +114,9 @@ function renderCartDrawer() {
     const itemTotal = priceNum * item.qty;
     total += itemTotal;
 
+    // KHÔNG HIỂN THỊ HÌNH ẢNH, CHỈ HIỂN THỊ THÔNG TIN
     itemsHTML += `
       <div class="cart-item" data-id="${item.id}">
-        <div class="item-image">
-          ${
-            item.model
-              ? `<model-viewer src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px;"></model-viewer>`
-              : `<img src="${item.image}" alt="${item.name}">`
-          }
-        </div>
         <div class="item-info">
           <div class="item-name">${item.name}</div>
           <div class="item-price">${priceNum.toLocaleString("vi-VN")} VNĐ</div>
@@ -171,7 +165,7 @@ function renderCartDrawer() {
 
 // Chuyển hướng đến trang login
 function redirectToLogin() {
-  window.location.href = "pages/login.html";
+  window.location.href = "../pages/login.html";
 }
 
 // Các hàm xử lý trong drawer
@@ -205,14 +199,14 @@ function checkoutFromDrawer() {
   const isLoggedIn = localStorage.getItem("currentUser") !== null;
   if (!isLoggedIn) {
     alert("Vui lòng đăng nhập để thanh toán!");
-    window.location.href = "pages/login.html";
+    window.location.href = "../pages/login.html";
     return;
   }
 
   closeCartDrawer();
   setTimeout(() => {
     window.open(
-      "pages/payment-popup.html",
+      "../pages/payment-popup.html",
       "payment_window",
       "width=850,height=700,scrollbars=yes,resizable=yes"
     );

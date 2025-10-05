@@ -177,7 +177,7 @@ function initCartEvents() {
 
       if (!localStorage.getItem("currentUser")) {
         alert("Vui lòng đăng nhập để mua hàng!");
-        window.location.href = "pages/login.html";
+        window.location.href = "../pages/login.html";
         return;
       }
 
@@ -190,7 +190,7 @@ function initCartEvents() {
       localStorage.setItem("paymentProduct", JSON.stringify(currentProduct));
 
       const popup = window.open(
-        "pages/payment-popup.html",
+        "../pages/payment-popup.html",
         "payment_window",
         "width=850,height=700,scrollbars=yes,resizable=yes"
       );
@@ -263,7 +263,7 @@ function initCartEvents() {
 
       if (!localStorage.getItem("currentUser")) {
         alert("Vui lòng đăng nhập để thanh toán!");
-        window.location.href = "pages/login.html";
+        window.location.href = "../pages/login.html";
         return;
       }
 
@@ -271,7 +271,7 @@ function initCartEvents() {
       console.log("Opening payment popup...");
 
       const popup = window.open(
-        "pages/payment-popup.html",
+        "../pages/payment-popup.html",
         "payment_window",
         "width=850,height=700,scrollbars=yes,resizable=yes"
       );
