@@ -2,236 +2,544 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Payment popup loaded");
 
-  // Tự động lấy giỏ hàng từ chính user đang đăng nhập
-  function loadCartForPayment() {
-    const userEmail = localStorage.getItem("currentUserEmail");
-    let cart = [];
+  // Kiểm tra xem có sản phẩm đơn lẻ hay không
+  const singleProduct = localStorage.getItem("singleProductForPayment");
 
-    if (userEmail) {
-      const userCartKey = `cart_${userEmail}`;
-      cart = JSON.parse(localStorage.getItem(userCartKey)) || [];
-    } else {
-      cart = JSON.parse(localStorage.getItem("temp_cart")) || [];
-    }
+  if (singleProduct) {
+    // Thanh toán cho một sản phẩm
+    loadSingleProductForPayment();
+  } else {
+    // Thanh toán cho giỏ hàng
+    loadCartForPayment();
+  }
+});
 
-    console.log("Cart loaded in payment popup:", cart);
+// Tải sản phẩm đơn lẻ để thanh toán
+// Tải giỏ hàng để thanh toán
+function loadCartForPayment() {
+  const userEmail = localStorage.getItem("currentUserEmail");
+  let cart = [];
 
-    if (cart.length === 0) {
-      document.body.innerHTML = `
-        <div style="padding: 20px; text-align: center;">
-          <h2>Giỏ hàng trống!</h2>
-          <p>Không có sản phẩm nào để thanh toán.</p>
-          <button onclick="window.close()">Đóng</button>
-        </div>
-      `;
-      return;
-    }
-
-    // Hiển thị giỏ hàng
-    renderPaymentCart(cart);
+  if (userEmail) {
+    const userCartKey = `cart_${userEmail}`;
+    cart = JSON.parse(localStorage.getItem(userCartKey)) || [];
+  } else {
+    cart = JSON.parse(localStorage.getItem("temp_cart")) || [];
   }
 
-  function renderPaymentCart(cart) {
-    let total = 0;
-    let html = `
-      <div class="payment-header">
+  console.log("Cart loaded in payment popup:", cart);
+
+  if (cart.length === 0) {
+    document.body.innerHTML = `
+      <div class="checkout-container">
+        <div class="checkout-header">
+          <h2>Giỏ hàng trống!</h2>
+        </div>
+        <div class="checkout-body">
+          <p>Không có sản phẩm nào để thanh toán.</p>
+          <button onclick="window.close()" class="btn btn-primary">Đóng</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  renderPaymentCart(cart);
+}
+
+function renderPaymentCart(cart) {
+  let total = 0;
+  let itemsHTML = "";
+
+  cart.forEach((item) => {
+    const price = parseFloat(item.price) || 0;
+    const itemTotal = price * item.qty;
+    total += itemTotal;
+
+    itemsHTML += `
+      <div class="checkout-item">
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-price">${price.toLocaleString("vi-VN")} VNĐ</div>
+        </div>
+        <div class="item-quantity">x${item.qty}</div>
+        <div class="item-total">${itemTotal.toLocaleString("vi-VN")} VNĐ</div>
+      </div>
+    `;
+  });
+
+  const html = `
+    <div class="checkout-container">
+      <div class="checkout-header">
         <h2>Thanh Toán Đơn Hàng</h2>
         <p>Xin chào: <strong>${localStorage.getItem("currentUser")}</strong></p>
       </div>
-      <div class="payment-items">
-        <h3>Sản phẩm trong giỏ hàng:</h3>
-    `;
-
-    cart.forEach((item) => {
-      const price = parseFloat(item.price) || 0;
-      const itemTotal = price * item.qty;
-      total += itemTotal;
-
-      html += `
-        <div class="payment-item">
-          <div class="item-name">${item.name} x ${item.qty}</div>
-          <div class="item-price">${itemTotal.toLocaleString("vi-VN")} VNĐ</div>
+      
+      <div class="checkout-body">
+        <div class="checkout-section">
+          <h3>Sản phẩm trong giỏ hàng</h3>
+          <div class="checkout-items">
+            ${itemsHTML}
+          </div>
         </div>
-      `;
+        
+        <div class="checkout-section">
+          <h3>Chọn phương thức thanh toán</h3>
+          <div class="payment-methods">
+            <div class="payment-option" onclick="selectPaymentMethod('banking')">
+              <input type="radio" id="banking" name="paymentMethod" value="banking">
+              <label for="banking">Chuyển khoản ngân hàng</label>
+            </div>
+            
+            <div class="payment-option" onclick="selectPaymentMethod('cash')">
+              <input type="radio" id="cash" name="paymentMethod" value="cash">
+              <label for="cash">Tiền mặt khi nhận hàng</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="checkout-section">
+          <h3>Địa chỉ nhận hàng</h3>
+          <div class="address-options">
+            <div class="address-option" onclick="selectAddress('saved')">
+              <input type="radio" id="savedAddress" name="addressMethod" value="saved">
+              <label for="savedAddress">Dùng địa chỉ từ tài khoản</label>
+            </div>
+            
+            <div class="address-option" onclick="selectAddress('new')">
+              <input type="radio" id="newAddress" name="addressMethod" value="new">
+              <label for="newAddress">Địa chỉ mới</label>
+            </div>
+          </div>
+          
+          <div id="newAddressForm" class="address-form">
+            <textarea id="customerAddress" placeholder="Nhập địa chỉ mới..."></textarea>
+          </div>
+        </div>
+        
+        <div class="checkout-summary">
+          <div class="summary-row">
+            <span>Tạm tính:</span>
+            <span>${total.toLocaleString("vi-VN")} VNĐ</span>
+          </div>
+          <div class="summary-row">
+            <span>Phí vận chuyển:</span>
+            <span>0 VNĐ</span>
+          </div>
+          <div class="summary-row total">
+            <span>Tổng cộng:</span>
+            <span>${total.toLocaleString("vi-VN")} VNĐ</span>
+          </div>
+        </div>
+        
+        <div class="checkout-actions">
+          <button onclick="processPayment()" class="btn btn-primary">Xác nhận thanh toán</button>
+          <button onclick="window.close()" class="btn btn-secondary">Hủy</button>
+        </div>
+        
+        <div id="paymentMessage"></div>
+      </div>
+    </div>
+  `;
+
+  document.body.innerHTML = html;
+}
+
+// Hiển thị form thanh toán cho sản phẩm đơn lẻ
+function renderSingleProductPayment(product) {
+  const html = `
+    <div class="checkout-container">
+      <div class="checkout-header">
+        <h2>Thanh Toán Sản Phẩm</h2>
+        <p>Xin chào: <strong>${localStorage.getItem("currentUser")}</strong></p>
+      </div>
+      
+      <div class="checkout-body">
+        <div class="checkout-section">
+          <h3>Thông tin sản phẩm</h3>
+          <div class="product-info">
+            <div class="product-image">
+              ${
+                product.model
+                  ? `<model-viewer src="${product.image}" alt="${product.name}" style="width: 100%; height: 200px; border-radius: 8px;" auto-rotate camera-controls></model-viewer>`
+                  : `<img src="${product.image}" alt="${product.name}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">`
+              }
+            </div>
+            <div class="product-details">
+              <h3>${product.name}</h3>
+              <div class="product-price">${formatPrice(product.price)} VNĐ</div>
+              <div class="quantity-selector">
+                <label>Số lượng:</label>
+                <div class="quantity-controls">
+                  <button class="qty-btn" id="decreaseQty">-</button>
+                  <input type="number" id="productQuantity" min="1" value="1">
+                  <button class="qty-btn" id="increaseQty">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="checkout-section">
+          <h3>Thông tin khách hàng</h3>
+          <div class="form-group">
+            <label for="fullName">Họ và tên</label>
+            <input type="text" id="fullName" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">Số điện thoại</label>
+            <input type="tel" id="phone" required>
+          </div>
+        </div>
+        
+        <div class="checkout-section">
+          <h3>Chọn phương thức thanh toán</h3>
+          <div class="payment-methods">
+            <div class="payment-option" onclick="selectPaymentMethod('banking')">
+              <input type="radio" id="banking" name="paymentMethod" value="banking">
+              <label for="banking">Chuyển khoản ngân hàng</label>
+            </div>
+            
+            <div class="payment-option" onclick="selectPaymentMethod('cash')">
+              <input type="radio" id="cash" name="paymentMethod" value="cash">
+              <label for="cash">Tiền mặt khi nhận hàng</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="checkout-section">
+          <h3>Địa chỉ nhận hàng</h3>
+          <div class="address-options">
+            <div class="address-option" onclick="selectAddress('saved')">
+              <input type="radio" id="savedAddress" name="addressMethod" value="saved">
+              <label for="savedAddress">Dùng địa chỉ từ tài khoản</label>
+            </div>
+            
+            <div class="address-option" onclick="selectAddress('new')">
+              <input type="radio" id="newAddress" name="addressMethod" value="new">
+              <label for="newAddress">Địa chỉ mới</label>
+            </div>
+          </div>
+          
+          <div id="newAddressForm" class="address-form">
+            <textarea id="customerAddress" placeholder="Nhập địa chỉ mới..."></textarea>
+          </div>
+        </div>
+        
+        <div class="checkout-summary">
+          <div class="summary-row">
+            <span>Tạm tính:</span>
+            <span id="subtotal">${formatPrice(product.price)} VNĐ</span>
+          </div>
+          <div class="summary-row">
+            <span>Phí vận chuyển:</span>
+            <span>0 VNĐ</span>
+          </div>
+          <div class="summary-row total">
+            <span>Tổng cộng:</span>
+            <span id="total">${formatPrice(product.price)} VNĐ</span>
+          </div>
+        </div>
+        
+        <div class="checkout-actions">
+          <button onclick="processSingleProductPayment()" class="btn btn-primary">Xác nhận thanh toán</button>
+          <button onclick="window.close()" class="btn btn-secondary">Hủy</button>
+        </div>
+        
+        <div id="paymentMessage"></div>
+      </div>
+    </div>
+  `;
+
+  document.body.innerHTML = html;
+
+  // Thiết lập sự kiện cho form
+  setupSingleProductForm(product);
+}
+
+// Thiết lập sự kiện cho form thanh toán sản phẩm đơn lẻ
+function setupSingleProductForm(product) {
+  // Sự kiện thay đổi số lượng
+  document.getElementById("decreaseQty").onclick = function () {
+    const qtyInput = document.getElementById("productQuantity");
+    const currentValue = parseInt(qtyInput.value) || 1;
+    if (currentValue > 1) {
+      qtyInput.value = currentValue - 1;
+      updateSingleProductTotal(product);
+    }
+  };
+
+  document.getElementById("increaseQty").onclick = function () {
+    const qtyInput = document.getElementById("productQuantity");
+    const currentValue = parseInt(qtyInput.value) || 1;
+    qtyInput.value = currentValue + 1;
+    updateSingleProductTotal(product);
+  };
+
+  document.getElementById("productQuantity").onchange = function () {
+    updateSingleProductTotal(product);
+  };
+
+  // Sự kiện chọn phương thức thanh toán
+  const paymentMethods = document.querySelectorAll(".payment-option");
+  paymentMethods.forEach((method) => {
+    method.addEventListener("click", function () {
+      paymentMethods.forEach((m) => m.classList.remove("selected"));
+      this.classList.add("selected");
+      this.querySelector("input").checked = true;
     });
+  });
 
-    html += `
-      </div>
-      <div class="payment-total">
-        <strong>Tổng cộng: ${total.toLocaleString("vi-VN")} VNĐ</strong>
-      </div>
-      <div class="payment-actions">
-        <button onclick="processPayment()" class="pay-btn">Thanh Toán</button>
-        <button onclick="window.close()" class="cancel-btn">Hủy</button>
-      </div>
-    `;
+  // Sự kiện chọn địa chỉ
+  const addressOptions = document.querySelectorAll(".address-option");
+  addressOptions.forEach((option) => {
+    option.addEventListener("click", function () {
+      addressOptions.forEach((o) => o.classList.remove("selected"));
+      this.classList.add("selected");
+      this.querySelector("input").checked = true;
 
-    document.body.innerHTML = html;
+      // Hiển thị form nhập địa chỉ mới nếu chọn
+      const newAddressForm = document.getElementById("newAddressForm");
+      if (newAddressForm) {
+        newAddressForm.style.display =
+          this.querySelector("input").value === "new" ? "block" : "none";
+      }
+    });
+  });
+}
+
+// Cập nhật tổng tiền cho sản phẩm đơn lẻ
+function updateSingleProductTotal(product) {
+  const quantity =
+    parseInt(document.getElementById("productQuantity").value) || 1;
+  const subtotal = product.price * quantity;
+
+  document.getElementById("subtotal").textContent =
+    formatPrice(subtotal) + " VNĐ";
+  document.getElementById("total").textContent = formatPrice(subtotal) + " VNĐ";
+}
+
+// Xử lý thanh toán cho sản phẩm đơn lẻ
+function processSingleProductPayment() {
+  const productData = JSON.parse(
+    localStorage.getItem("singleProductForPayment")
+  );
+  if (!productData) {
+    showMessage("Không tìm thấy thông tin sản phẩm!", "error");
+    return;
   }
 
-  // Gọi hàm load cart
-  loadCartForPayment();
-});
+  const quantity =
+    parseInt(document.getElementById("productQuantity").value) || 1;
+  const paymentMethod = document.querySelector(
+    'input[name="paymentMethod"]:checked'
+  )?.value;
+  const addressMethod = document.querySelector(
+    'input[name="addressMethod"]:checked'
+  )?.value;
 
-function processPayment() {
-  alert("Thanh toán thành công! Cảm ơn bạn đã mua hàng.");
+  if (!paymentMethod) {
+    showMessage("Vui lòng chọn phương thức thanh toán!", "error");
+    return;
+  }
 
-  // Xóa giỏ hàng sau khi thanh toán
-  const userEmail = localStorage.getItem("currentUserEmail");
-  if (userEmail) {
-    localStorage.removeItem(`cart_${userEmail}`);
+  if (!addressMethod) {
+    showMessage("Vui lòng chọn phương thức địa chỉ!", "error");
+    return;
+  }
+
+  // Lấy địa chỉ giao hàng
+  let shippingAddress = "";
+  if (addressMethod === "saved") {
+    shippingAddress = "123 Đường ABC, Quận 1, TP.HCM"; // Địa chỉ mặc định
   } else {
-    localStorage.removeItem("temp_cart");
+    shippingAddress = document.getElementById("customerAddress")?.value.trim();
+    if (!shippingAddress) {
+      showMessage("Vui lòng nhập địa chỉ giao hàng!", "error");
+      return;
+    }
   }
+
+  const orderData = {
+    items: [
+      {
+        id: productData.id,
+        name: productData.name,
+        price: productData.price,
+        quantity: quantity,
+        image: productData.image,
+      },
+    ],
+    total: productData.price * quantity,
+    customerInfo: {
+      fullName: document.getElementById("fullName").value,
+      phone: document.getElementById("phone").value,
+      address: shippingAddress,
+    },
+    paymentMethod: paymentMethod,
+  };
+
+  // Lưu đơn hàng
+  const orderId = saveOrderToHistory(orderData);
+
+  // Xóa sản phẩm khỏi localStorage
+  localStorage.removeItem("singleProductForPayment");
+
+  // Hiển thị thông báo thành công
+  showMessage("Thanh toán thành công! Cảm ơn bạn đã mua hàng.", "success");
 
   setTimeout(() => {
     window.close();
-    // Refresh trang chính để cập nhật giỏ hàng
     if (window.opener && !window.opener.closed) {
       window.opener.location.reload();
     }
-  }, 1500);
+  }, 2000);
 }
-// checkout.js - Xử lý thanh toán trong popup
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("Payment popup loaded");
 
-  function loadCartForPayment() {
-    const userEmail = localStorage.getItem("currentUserEmail");
-    let cart = [];
+// Tải giỏ hàng để thanh toán
+function loadCartForPayment() {
+  const userEmail = localStorage.getItem("currentUserEmail");
+  let cart = [];
 
-    if (userEmail) {
-      const userCartKey = `cart_${userEmail}`;
-      cart = JSON.parse(localStorage.getItem(userCartKey)) || [];
-    } else {
-      cart = JSON.parse(localStorage.getItem("temp_cart")) || [];
-    }
-
-    console.log("Cart loaded in payment popup:", cart);
-
-    if (cart.length === 0) {
-      document.body.innerHTML = `
-        <div style="padding: 20px; text-align: center;">
-          <h2>Giỏ hàng trống!</h2>
-          <p>Không có sản phẩm nào để thanh toán.</p>
-          <button onclick="window.close()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Đóng</button>
-        </div>
-      `;
-      return;
-    }
-
-    renderPaymentCart(cart);
+  if (userEmail) {
+    const userCartKey = `cart_${userEmail}`;
+    cart = JSON.parse(localStorage.getItem(userCartKey)) || [];
+  } else {
+    cart = JSON.parse(localStorage.getItem("temp_cart")) || [];
   }
 
-  function renderPaymentCart(cart) {
-    let total = 0;
-    let html = `
-      <div class="payment-header" style="text-align: center; margin-bottom: 20px;">
+  console.log("Cart loaded in payment popup:", cart);
+
+  if (cart.length === 0) {
+    document.body.innerHTML = `
+      <div class="checkout-container">
+        <div class="checkout-header">
+          <h2>Giỏ hàng trống!</h2>
+        </div>
+        <div class="checkout-body">
+          <p>Không có sản phẩm nào để thanh toán.</p>
+          <button onclick="window.close()" class="btn btn-primary">Đóng</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  renderPaymentCart(cart);
+}
+
+function renderPaymentCart(cart) {
+  let total = 0;
+  let itemsHTML = "";
+
+  cart.forEach((item) => {
+    const price = parseFloat(item.price) || 0;
+    const itemTotal = price * item.qty;
+    total += itemTotal;
+
+    itemsHTML += `
+      <div class="checkout-item">
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-price">${price.toLocaleString("vi-VN")} VNĐ</div>
+        </div>
+        <div class="item-quantity">x${item.qty}</div>
+        <div class="item-total">${itemTotal.toLocaleString("vi-VN")} VNĐ</div>
+      </div>
+    `;
+  });
+
+  const html = `
+    <div class="checkout-container">
+      <div class="checkout-header">
         <h2>Thanh Toán Đơn Hàng</h2>
         <p>Xin chào: <strong>${localStorage.getItem("currentUser")}</strong></p>
       </div>
       
-      <div class="payment-items" style="margin-bottom: 20px;">
-        <h3>Sản phẩm:</h3>
-    `;
-
-    cart.forEach((item) => {
-      const price = parseFloat(item.price) || 0;
-      const itemTotal = price * item.qty;
-      total += itemTotal;
-
-      html += `
-        <div class="payment-item" style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
-          <div class="item-name">${item.name} x ${item.qty}</div>
-          <div class="item-price">${itemTotal.toLocaleString("vi-VN")} VNĐ</div>
-        </div>
-      `;
-    });
-
-    html += `
-      </div>
-      
-      <div class="payment-total" style="text-align: right; font-size: 1.2em; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px;">
-        <strong>Tổng cộng: ${total.toLocaleString("vi-VN")} VNĐ</strong>
-      </div>
-      
-      <div class="payment-methods" style="margin: 20px 0;">
-        <h3>Chọn phương thức thanh toán:</h3>
-        
-        <div class="payment-option" style="margin: 10px 0; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;" onclick="selectPaymentMethod('banking')">
-          <input type="radio" id="banking" name="paymentMethod" value="banking" style="margin-right: 10px;">
-          <label for="banking" style="cursor: pointer; font-weight: bold;">
-            Chuyển khoản ngân hàng
-          </label>
+      <div class="checkout-body">
+        <div class="checkout-section">
+          <h3>Sản phẩm trong giỏ hàng</h3>
+          <div class="checkout-items">
+            ${itemsHTML}
+          </div>
         </div>
         
-        <div class="payment-option" style="margin: 10px 0; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;" onclick="selectPaymentMethod('cash')">
-          <input type="radio" id="cash" name="paymentMethod" value="cash" style="margin-right: 10px;">
-          <label for="cash" style="cursor: pointer; font-weight: bold;">
-            Tiền mặt khi nhận hàng
-          </label>
-        </div>
-      </div>
-      
-      <div class="shipping-address" style="margin: 20px 0;">
-        <h3>Địa chỉ nhận hàng:</h3>
-        
-        <div class="address-option" style="margin: 10px 0; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;" onclick="selectAddress('saved')">
-          <input type="radio" id="savedAddress" name="addressMethod" value="saved" style="margin-right: 10px;">
-          <label for="savedAddress" style="cursor: pointer; font-weight: bold;">
-            Dùng địa chỉ từ tài khoản
-          </label>
+        <div class="checkout-section">
+          <h3>Chọn phương thức thanh toán</h3>
+          <div class="payment-methods">
+            <div class="payment-option" onclick="selectPaymentMethod('banking')">
+              <input type="radio" id="banking" name="paymentMethod" value="banking">
+              <label for="banking">Chuyển khoản ngân hàng</label>
+            </div>
+            
+            <div class="payment-option" onclick="selectPaymentMethod('cash')">
+              <input type="radio" id="cash" name="paymentMethod" value="cash">
+              <label for="cash">Tiền mặt khi nhận hàng</label>
+            </div>
+          </div>
         </div>
         
-        <div class="address-option" style="margin: 10px 0; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;" onclick="selectAddress('new')">
-          <input type="radio" id="newAddress" name="addressMethod" value="new" style="margin-right: 10px;">
-          <label for="newAddress" style="cursor: pointer; font-weight: bold;">
-            Địa chỉ mới
-          </label>
+        <div class="checkout-section">
+          <h3>Địa chỉ nhận hàng</h3>
+          <div class="address-options">
+            <div class="address-option" onclick="selectAddress('saved')">
+              <input type="radio" id="savedAddress" name="addressMethod" value="saved">
+              <label for="savedAddress">Dùng địa chỉ từ tài khoản</label>
+            </div>
+            
+            <div class="address-option" onclick="selectAddress('new')">
+              <input type="radio" id="newAddress" name="addressMethod" value="new">
+              <label for="newAddress">Địa chỉ mới</label>
+            </div>
+          </div>
+          
+          <div id="newAddressForm" class="address-form">
+            <textarea id="customerAddress" placeholder="Nhập địa chỉ mới..."></textarea>
+          </div>
         </div>
         
-        <div id="newAddressForm" style="display: none; margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
-          <textarea id="customerAddress" placeholder="Nhập địa chỉ mới..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; height: 60px;"></textarea>
+        <div class="checkout-summary">
+          <div class="summary-row">
+            <span>Tạm tính:</span>
+            <span>${total.toLocaleString("vi-VN")} VNĐ</span>
+          </div>
+          <div class="summary-row">
+            <span>Phí vận chuyển:</span>
+            <span>0 VNĐ</span>
+          </div>
+          <div class="summary-row total">
+            <span>Tổng cộng:</span>
+            <span>${total.toLocaleString("vi-VN")} VNĐ</span>
+          </div>
         </div>
+        
+        <div class="checkout-actions">
+          <button onclick="processPayment()" class="btn btn-primary">Xác nhận thanh toán</button>
+          <button onclick="window.close()" class="btn btn-secondary">Hủy</button>
+        </div>
+        
+        <div id="paymentMessage"></div>
       </div>
-      
-      <div class="payment-actions" style="text-align: center; margin-top: 30px;">
-        <button onclick="processPayment()" class="pay-btn" style="padding: 12px 30px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; margin: 0 10px;">
-          Xác nhận thanh toán
-        </button>
-        <button onclick="window.close()" class="cancel-btn" style="padding: 12px 30px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; margin: 0 10px;">
-          Hủy
-        </button>
-      </div>
-      
-      <div id="paymentMessage" style="margin-top: 20px; text-align: center;"></div>
-    `;
+    </div>
+  `;
 
-    document.body.innerHTML = html;
-  }
+  document.body.innerHTML = html;
+}
 
-  loadCartForPayment();
-});
-
-// Biến toàn cục
-let selectedPaymentMethod = "";
-let selectedAddressMethod = "";
-let savedUserAddress = "123 Đường ABC, Quận 1, TP.HCM"; // Địa chỉ mặc định
-
+// Các hàm chung
 function selectPaymentMethod(method) {
   selectedPaymentMethod = method;
 
   document.querySelectorAll(".payment-option").forEach((option) => {
-    option.style.borderColor = "#e0e0e0";
-    option.style.background = "white";
+    option.classList.remove("selected");
   });
 
   const selectedOption = document.querySelector(
     `[onclick="selectPaymentMethod('${method}')"]`
   );
   if (selectedOption) {
-    selectedOption.style.borderColor = "#007bff";
-    selectedOption.style.background = "#f0f8ff";
+    selectedOption.classList.add("selected");
   }
 
   document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
@@ -243,16 +551,14 @@ function selectAddress(method) {
   selectedAddressMethod = method;
 
   document.querySelectorAll(".address-option").forEach((option) => {
-    option.style.borderColor = "#e0e0e0";
-    option.style.background = "white";
+    option.classList.remove("selected");
   });
 
   const selectedOption = document.querySelector(
     `[onclick="selectAddress('${method}')"]`
   );
   if (selectedOption) {
-    selectedOption.style.borderColor = "#007bff";
-    selectedOption.style.background = "#f0f8ff";
+    selectedOption.classList.add("selected");
   }
 
   document.querySelectorAll('input[name="addressMethod"]').forEach((radio) => {
@@ -391,46 +697,13 @@ function showMessage(message, type) {
   // Tạo overlay mới
   overlay = document.createElement("div");
   overlay.id = "paymentOverlay";
-  overlay.style.position = "fixed";
-  overlay.style.top = "0";
-  overlay.style.left = "0";
-  overlay.style.width = "100%";
-  overlay.style.height = "100%";
-  overlay.style.background =
-    type === "processing" ? "rgba(0,0,0,0.2)" : "rgba(0,0,0,0.4)";
-  overlay.style.display = "flex";
-  overlay.style.justifyContent = "center";
-  overlay.style.alignItems = "center";
-  overlay.style.zIndex = "9999";
+  overlay.className = "payment-overlay";
+  overlay.innerHTML = `
+    <div class="payment-message ${type}">
+      ${message}
+    </div>
+  `;
 
-  // Tạo hộp thông báo
-  const msgDiv = document.createElement("div");
-  msgDiv.innerHTML = message;
-  msgDiv.style.background =
-    type === "error"
-      ? "#f8d7da"
-      : type === "success"
-      ? "#d4edda"
-      : type === "processing"
-      ? "#d1ecf1"
-      : "#f8f9fa";
-  msgDiv.style.color =
-    type === "error"
-      ? "#dc3545"
-      : type === "success"
-      ? "#28a745"
-      : type === "processing"
-      ? "#007bff"
-      : "#666";
-  msgDiv.style.padding = "20px 30px";
-  msgDiv.style.borderRadius = "12px";
-  msgDiv.style.fontWeight = "bold";
-  msgDiv.style.fontSize = "18px";
-  msgDiv.style.textAlign = "center";
-  msgDiv.style.minWidth = "300px";
-  msgDiv.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-
-  overlay.appendChild(msgDiv);
   document.body.appendChild(overlay);
 
   // Nếu là success hoặc error thì tự động ẩn sau 2s
@@ -439,4 +712,14 @@ function showMessage(message, type) {
       overlay.remove();
     }, 2000);
   }
+}
+
+// Biến toàn cục
+let selectedPaymentMethod = "";
+let selectedAddressMethod = "";
+let savedUserAddress = "123 Đường ABC, Quận 1, TP.HCM"; // Địa chỉ mặc định
+
+// Định dạng giá tiền
+function formatPrice(price) {
+  return new Intl.NumberFormat("vi-VN").format(price);
 }
