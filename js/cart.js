@@ -12,12 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch((error) => {
       console.error("Lỗi tải file JSON:", error);
+      // Nếu không tải được file JSON, sử dụng dữ liệu mẫu
       productsData = [
         {
           id: 1,
           name: "Banana",
           image: "images/banana_duct_taped_to_the_wall.glb",
-          price: 2000000000,
+          price: "2000000000",
           description: "Chuối cao cấp",
           category: "đặc biệt",
           model: true,
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: 2,
           name: "Táo Vàng",
           image: "https://picsum.photos/seed/apple/400/300.jpg",
-          price: 1500000000,
+          price: "1500000000",
           description:
             "Quả táo vàng óng, tượng trưng cho sự thịnh vượng và may mắn.",
           category: "trái cây",
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: 3,
           name: "Cam Ngọt",
           image: "https://picsum.photos/seed/orange/400/300.jpg",
-          price: 800000000,
+          price: "800000000",
           description:
             "Vị ngọt thanh của cam tươi mát, mang lại năng lượng tích cực.",
           category: "trái cây",
@@ -44,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: 4,
           name: "Nho Tím",
           image: "https://picsum.photos/seed/grape/400/300.jpg",
-          price: 1200000000,
+          price: "1200000000",
           description:
             "Chùm nho tím mọng nước, biểu tượng của sự sang trọng và đẳng cấp.",
           category: "quà tặng",
@@ -53,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: 5,
           name: "Dưa Hấu Đỏ",
           image: "https://picsum.photos/seed/watermelon/400/300.jpg",
-          price: 2500000000,
+          price: "2500000000",
           description: "Vị ngọt mát của dưa hấu trong ngày hè nóng bức.",
           category: "trái cây",
         },
@@ -61,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: 6,
           name: "Xoài Cát Hòa Lộc",
           image: "https://picsum.photos/seed/mango/400/300.jpg",
-          price: 900000000,
+          price: "900000000",
           description:
             "Vị ngọt đậm đà và thơm lừng đặc trưng của xoài cát hoa lộc.",
           category: "quà tặng",
@@ -70,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: 7,
           name: "Lựu Đỏ",
           image: "https://picsum.photos/seed/pomegranate/400/300.jpg",
-          price: 1800000000,
+          price: "1800000000",
           description:
             "Những hạt lựu ruby đỏ rực rỡ, đầy dinh dưỡng và sức sống.",
           category: "quà tặng",
@@ -79,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: 8,
           name: "Cherry Đỏ",
           image: "https://picsum.photos/seed/cherry/400/300.jpg",
-          price: 1300000000,
+          price: "1300000000",
           description: "Những quả cherry đỏ mọng, ngọt ngào và đầy quyến rũ.",
           category: "quà tặng",
         },
@@ -87,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: 9,
           name: "Dứa Vàng",
           image: "https://picsum.photos/seed/pineapple/400/300.jpg",
-          price: 700000000,
+          price: "700000000",
           description:
             "Vị chua ngọt hài hòa của dứa tươi, mang đến cảm giác nhiệt đới.",
           category: "trái cây",
@@ -248,20 +249,10 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCartCount();
     renderCartDrawer();
 
-    const cartDrawer = document.getElementById("cartDrawer");
-    const cartOverlay = document.getElementById("cartOverlay");
-    if (cartDrawer && cartOverlay) {
-      cartDrawer.classList.add("active");
-      cartOverlay.classList.add("active");
-    } else {
-      console.error("Không tìm thấy cartDrawer hoặc cartOverlay");
-    }
+    // Hiển thị thông báo thay vì mở drawer
+    showCartNotification(`Đã thêm ${product.name} vào giỏ hàng!`);
 
-    const notif = document.getElementById("cartNotification");
-    if (notif) {
-      notif.classList.add("show");
-      setTimeout(() => notif.classList.remove("show"), 2000);
-    }
+    console.log("Đã thêm vào giỏ:", product.name);
   }
 
   // 8. Hàm xử lý mua ngay
@@ -389,7 +380,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 11. Khởi tạo giỏ hàng khi tải trang
+  // 11. Hàm hiển thị thông báo thêm vào giỏ hàng
+  function showCartNotification(message) {
+    // Xóa thông báo cũ nếu có
+    const oldNotification = document.querySelector(".cart-notification");
+    if (oldNotification) {
+      oldNotification.remove();
+    }
+
+    // Tạo thông báo mới
+    const notification = document.createElement("div");
+    notification.className = "cart-notification";
+    notification.innerHTML = `
+      <i class="fas fa-check"></i> ${message}
+    `;
+
+    document.body.appendChild(notification);
+
+    // Hiển thị thông báo
+    setTimeout(() => {
+      notification.classList.add("show");
+    }, 100);
+
+    // Ẩn thông báo sau 3 giây
+    setTimeout(() => {
+      notification.classList.remove("show");
+      setTimeout(() => {
+        notification.remove();
+      }, 300);
+    }, 3000);
+  }
+
+  // 12. Khởi tạo giỏ hàng khi tải trang
   updateCartCount();
   renderCartDrawer();
 });
