@@ -69,5 +69,77 @@
     "price": "700000000",
     "description": "Vị chua ngọt hài hòa của dứa tươi, mang đến cảm giác nhiệt đới.",
     "category": "trái cây"
+  },
+  {
+    "id": 10,
+    "name": "Bưởi Da Xanh",
+    "image": "https://picsum.photos/seed/pomelo/400/300.jpg",
+    "price": "600000000",
+    "description": "Bưởi da xanh ruột hồng, ngọt thanh và nhiều vitamin C.",
+    "category": "trái cây"
+  },
+  {
+    "id": 11,
+    "name": "Chanh Leo",
+    "image": "https://picsum.photos/seed/passionfruit/400/300.jpg",
+    "price": "500000000",
+    "description": "Chanh leo vàng, vị chua ngọt thơm mát.",
+    "category": "trái cây"
+  },
+  {
+    "id": 12,
+    "name": "Kiwi Xanh",
+    "image": "https://picsum.photos/seed/kiwi/400/300.jpg",
+    "price": "1100000000",
+    "description": "Kiwi xanh mọng nước, giàu vitamin và chất xơ.",
+    "category": "quà tặng"
+  },
+  {
+    "id": 13,
+    "name": "Dâu Tây",
+    "image": "https://picsum.photos/seed/strawberry/400/300.jpg",
+    "price": "1600000000",
+    "description": "Dâu tây đỏ mọng, ngọt lịm và thơm ngon.",
+    "category": "quà tặng"
+  },
+  {
+    "id": 14,
+    "name": "Mận Hậu",
+    "image": "https://picsum.photos/seed/plum/400/300.jpg",
+    "price": "400000000",
+    "description": "Mận hậu chua ngọt, giòn tan trong miệng.",
+    "category": "trái cây"
+  },
+  {
+    "id": 15,
+    "name": "Ổi Nữ Hoàng",
+    "image": "https://picsum.photos/seed/guava/400/300.jpg",
+    "price": "300000000",
+    "description": "Ổi nữ hoàng giòn ngọt, ít hạt và thơm dịu.",
+    "category": "trái cây"
+  },
+  {
+    "id": 16,
+    "name": "Măng Cụt",
+    "image": "https://picsum.photos/seed/mangosteen/400/300.jpg",
+    "price": "1400000000",
+    "description": "Măng cụt tím, vị ngọt thanh và thơm đặc trưng.",
+    "category": "quà tặng"
+  },
+  {
+    "id": 17,
+    "name": "Nhãn Lồng",
+    "image": "https://picsum.photos/seed/longan/400/300.jpg",
+    "price": "350000000",
+    "description": "Nhãn lồng cùi dày, ngọt thanh và thơm mát.",
+    "category": "trái cây"
+  },
+  {
+    "id": 18,
+    "name": "Vải Thiều",
+    "image": "https://picsum.photos/seed/lychee/400/300.jpg",
+    "price": "950000000",
+    "description": "Vải thiều Thanh Hà, ngọt lịm và thơm ngon.",
+    "category": "quà tặng"
   }
 ]

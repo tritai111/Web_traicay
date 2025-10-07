@@ -72,6 +72,7 @@
               <option>ALL</option>
               <option>Quà tặng trái cây</option>
               <option>Trái cây Việt Nam</option>
+              <option>Đặc biệt</option>
             </select>
           </div>
           <input
@@ -235,15 +236,37 @@
       <!-- Phần sản phẩm mới -->
       <section class="products-section">
         <h2 class="section-title">Sản Phẩm Nổi Bật</h2>
-        <div id="loading">Đang tải...</div>
-        <p
-          id="noResults"
-          style="display: none; text-align: center; color: #e74c3c"
-        >
-          Không tìm thấy sản phẩm nào.
-        </p>
+
+        <div id="loading" class="loading">Đang tải sản phẩm...</div>
+
+        <p id="noResults" class="no-results">Không tìm thấy sản phẩm nào.</p>
+
         <div class="products-container" id="productsContainer">
           <!-- Sản phẩm sẽ được render động bằng JavaScript -->
+        </div>
+
+        <!-- Phân trang đơn giản -->
+        <div class="pagination-container" id="paginationContainer">
+          <div class="pagination">
+            <button
+              id="prev-page"
+              class="pagination-btn pagination-prev"
+              disabled
+            >
+              <i class="fas fa-chevron-left"></i>
+              Trước
+            </button>
+
+            <div class="pagination-info">
+              Trang <span id="current-page">1</span> /
+              <span id="total-pages">1</span>
+            </div>
+
+            <button id="next-page" class="pagination-btn pagination-next">
+              Sau
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -262,12 +285,8 @@
         </div>
       </div>
     </main>
-    <script src="../js/auth.js"></script>
-    <script src="../js/cart.js"></script>
-    <script src="../js/search.js"></script>
-    <script src="../js/main.js"></script>
-    <!-- Thêm file banner.js cho chức năng trượt -->
-    <script src="../js/banner.js"></script>
+
+    <script src="../js/mainjs.js" defer></script>
     <script>
       // Khởi tạo Feather Icons
       document.addEventListener("DOMContentLoaded", function () {
