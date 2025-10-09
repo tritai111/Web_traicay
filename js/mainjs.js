@@ -70,7 +70,7 @@ const App = {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
 
-    showNotification(message, type = "success", duration = 3000) {
+    showNotification(message, type = "success", duration = 1000) {
       let notification = document.querySelector(".cart-notification");
       if (!notification) {
         notification = document.createElement("div");
@@ -249,9 +249,6 @@ App.Auth = {
         isVerified: true,
       };
       localStorage.setItem("registeredUsers", JSON.stringify(users));
-      alert(`Tài khoản mới đã được tạo qua ${provider}!`);
-    } else {
-      alert(`Chào mừng trở lại, ${users[email].name}!`);
     }
     localStorage.setItem("currentUser", users[email].name);
     localStorage.setItem("currentUserEmail", email);
@@ -272,11 +269,18 @@ window.handleSocialLogin = (provider) => App.Auth.handleSocialLogin(provider);
 // MODULE GIỎ HÀNG (CART)
 // ========================================
 App.Cart = {
+  // 添加一个标志来防止重复初始化
+  isInitialized: false,
+
   init() {
+    // 如果已经初始化过，直接返回
+    if (this.isInitialized) return;
+
     // Sử dụng event delegation cho các nút giỏ hàng
     document.addEventListener("click", (e) => {
       if (e.target.closest(".add-to-cart-btn")) {
         e.preventDefault();
+        e.stopPropagation(); // 防止事件冒泡
         const productId = parseInt(
           e.target.closest(".add-to-cart-btn").dataset.productId
         );
@@ -284,6 +288,7 @@ App.Cart = {
       }
       if (e.target.closest(".buy-now-btn")) {
         e.preventDefault();
+        e.stopPropagation(); // 防止事件冒泡
         const productId = parseInt(
           e.target.closest(".buy-now-btn").dataset.productId
         );
@@ -307,6 +312,9 @@ App.Cart = {
       if (e.target.classList.contains("remove-btn"))
         this.remove(parseInt(e.target.dataset.id));
     });
+
+    // 标记为已初始化
+    this.isInitialized = true;
   },
 
   get() {
@@ -333,6 +341,25 @@ App.Cart = {
       return;
     }
 
+    // Xử lý mua ngay - KHÔNG thêm vào giỏ hàng
+    if (buyNow) {
+      console.log(`[Cart.add] Chế độ mua ngay - không thêm vào giỏ hàng`);
+      localStorage.setItem(
+        "singleProductForPayment",
+        JSON.stringify({
+          ...product,
+          qty: 1, // Thêm số lượng mặc định là 1 cho mua ngay
+        })
+      );
+      console.log(
+        `[Cart.add] Đã lưu sản phẩm mua ngay vào localStorage. Mở popup.`
+      );
+      this.openPaymentPopup();
+      App.utils.showNotification(`Đã chuẩn bị mua ngay "${product.name}"!`);
+      return; // Dừng lại, không thực hiện các bước tiếp theo
+    }
+
+    // Xử lý thêm vào giỏ hàng (chỉ khi không phải mua ngay)
     let cart = this.get();
     const existingItem = cart.find((item) => item.id === productId);
     if (existingItem) {
@@ -345,11 +372,6 @@ App.Cart = {
     this.updateCount();
     this.renderDrawer();
     App.utils.showNotification(`Đã thêm "${product.name}" vào giỏ hàng!`);
-
-    if (buyNow) {
-      localStorage.setItem("singleProductForPayment", JSON.stringify(product));
-      this.openPaymentPopup();
-    }
   },
 
   updateQty(id, change) {

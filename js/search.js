@@ -17,6 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
       window.productsData = await response.json();
       loading.style.display = "none";
       displayProducts(window.productsData);
+
+      // Khởi tạo giỏ hàng sau khi tải sản phẩm
+      if (typeof App !== "undefined" && App.Cart) {
+        App.Cart.init();
+        App.Cart.updateCount();
+      }
     } catch (error) {
       loading.style.display = "none";
       productsContainer.innerHTML = `<p style="color: red; text-align: center;">Lỗi khi tải dữ liệu: ${error.message}</p>`;
@@ -48,10 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
             "vi-VN"
           )} VNĐ</div>
           <div class="product-actions">
-            <button class="buy-now-btn" data-id="${
+            <button class="buy-now-btn" data-product-id="${
               product.id
             }">MUA NGAY</button>
-            <button class="add-to-cart-btn" data-id="${product.id}">
+            <button class="add-to-cart-btn" data-product-id="${product.id}">
               <i class="fas fa-shopping-cart"></i>
               Thêm vào giỏ
             </button>
@@ -60,6 +66,11 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       productsContainer.appendChild(productCard);
     });
+
+    // Cập nhật lại giỏ hàng sau khi hiển thị sản phẩm mới
+    if (typeof App !== "undefined" && App.Cart) {
+      App.Cart.updateCount();
+    }
   }
 
   // Hàm tìm kiếm sản phẩm
