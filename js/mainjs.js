@@ -717,7 +717,7 @@ App.Products = {
 // ========================================
 App.Pagination = {
   currentPage: 1,
-  productsPerPage: 9,
+  productsPerPage: 12,
   filteredProducts: [],
 
   init() {
