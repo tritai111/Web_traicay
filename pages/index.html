@@ -49,6 +49,324 @@
         background-color: transparent;
       }
     </style>
+    <style>
+      /* Modern Footer Styles */
+      .main-footer {
+        background: #1a1a1a;
+        color: white;
+        margin-top: 80px;
+        padding: 60px 0 0;
+        border-top: 4px solid #e74c3c;
+      }
+
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1.5fr;
+        gap: 50px;
+      }
+
+      .footer-brand {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        text-decoration: none;
+      }
+
+      .footer-logo-img {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+      }
+
+      .footer-logo-text {
+        font-family: "Pacifico", cursive;
+        font-size: 2.2rem;
+        color: #e74c3c;
+        margin: 0;
+      }
+
+      .footer-tagline {
+        font-size: 1.1rem;
+        color: #ccc;
+        margin-bottom: 25px;
+        line-height: 1.6;
+      }
+
+      .newsletter-form {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .newsletter-input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 1px solid #444;
+        border-radius: 8px;
+        background: #2a2a2a;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      .newsletter-input::placeholder {
+        color: #888;
+      }
+
+      .newsletter-btn {
+        padding: 12px 20px;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.3s ease;
+      }
+
+      .newsletter-btn:hover {
+        background: #c0392b;
+      }
+
+      .footer-column h4 {
+        font-size: 1.3rem;
+        margin-bottom: 25px;
+        color: white;
+        position: relative;
+      }
+
+      .footer-column h4::after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background: #e74c3c;
+        border-radius: 2px;
+      }
+
+      .footer-links {
+        list-style: none;
+        padding: 0;
+      }
+
+      .footer-links li {
+        margin-bottom: 15px;
+      }
+
+      .footer-links a {
+        color: #bbb;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .footer-links a:hover {
+        color: #e74c3c;
+        transform: translateX(5px);
+      }
+
+      .footer-links a i {
+        font-size: 0.8rem;
+        opacity: 0.7;
+      }
+
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        color: #bbb;
+      }
+
+      .contact-item i {
+        color: #e74c3c;
+        margin-top: 2px;
+        font-size: 1.1rem;
+      }
+
+      .social-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .social-card {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: #2a2a2a;
+        border-radius: 10px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid #444;
+      }
+
+      .social-card:hover {
+        background: #e74c3c;
+        transform: translateY(-3px);
+        border-color: #e74c3c;
+      }
+
+      .footer-bottom {
+        margin-top: 60px;
+        padding: 25px 0;
+        background: #151515;
+        border-top: 1px solid #333;
+      }
+
+      .footer-bottom-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .copyright {
+        color: #888;
+        font-size: 0.9rem;
+      }
+
+      .footer-legal {
+        display: flex;
+        gap: 25px;
+      }
+
+      .footer-legal a {
+        color: #888;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .footer-legal a:hover {
+        color: #e74c3c;
+      }
+
+      .payment-methods {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .payment-text {
+        color: #888;
+        font-size: 0.9rem;
+        margin-right: 10px;
+      }
+
+      .payment-icon {
+        width: 40px;
+        height: 25px;
+        background: #2a2a2a;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #888;
+        font-size: 0.8rem;
+        border: 1px solid #444;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .footer-container {
+          grid-template-columns: 1fr 1fr;
+          gap: 40px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .footer-container {
+          grid-template-columns: 1fr;
+          gap: 35px;
+          text-align: center;
+        }
+
+        .footer-column h4::after {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        .footer-logo {
+          justify-content: center;
+        }
+
+        .newsletter-form {
+          flex-direction: column;
+        }
+
+        .footer-links a {
+          justify-content: center;
+        }
+
+        .contact-item {
+          justify-content: center;
+        }
+
+        .social-grid {
+          justify-content: center;
+        }
+
+        .footer-bottom-content {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .payment-methods {
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .main-footer {
+          margin-top: 50px;
+          padding: 40px 0 0;
+        }
+
+        .footer-container {
+          padding: 0 15px;
+          gap: 30px;
+        }
+
+        .footer-logo-text {
+          font-size: 1.8rem;
+        }
+
+        .footer-logo-img {
+          width: 50px;
+          height: 50px;
+        }
+
+        .social-grid {
+          grid-template-columns: repeat(3, 50px);
+        }
+      }
+    </style>
   </head>
   <body>
     <!-- Thanh điều hướng -->
@@ -286,6 +604,144 @@
         </div>
       </div>
     </main>
+
+    <!-- Footer HTML -->
+    <footer class="main-footer">
+      <div class="footer-container">
+        <!-- Brand Column -->
+        <div class="footer-column footer-brand">
+          <a href="../pages/index.html" class="footer-logo">
+            <img
+              src="../images/Gemini_Generated_Image_o63bfqo63bfqo63b-removebg-preview (Edited).png"
+              alt="Pomegranate Logo"
+              class="footer-logo-img"
+            />
+            <span class="footer-logo-text">Pomegranate</span>
+          </a>
+          <p class="footer-tagline">
+            Chuyên cung cấp trái cây tươi ngon, chất lượng cao. Cam kết 100% tự
+            nhiên, không chất bảo quản, giao hàng tận nơi.
+          </p>
+          <div class="newsletter-form">
+            <input
+              type="email"
+              class="newsletter-input"
+              placeholder="Nhập email để nhận ưu đãi"
+            />
+            <button class="newsletter-btn">Đăng ký</button>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-column">
+          <h4>Liên kết nhanh</h4>
+          <ul class="footer-links">
+            <li>
+              <a href="../pages/index.html"
+                ><i class="fas fa-home"></i> Trang chủ</a
+              >
+            </li>
+            <li>
+              <a href="../pages/products.html"
+                ><i class="fas fa-shopping-bag"></i> Sản phẩm</a
+              >
+            </li>
+            <li>
+              <a href="../pages/about.html"
+                ><i class="fas fa-info-circle"></i> Về chúng tôi</a
+              >
+            </li>
+            <li>
+              <a href="../pages/contact.html"
+                ><i class="fas fa-phone"></i> Liên hệ</a
+              >
+            </li>
+            <li>
+              <a href="../pages/promotions.html"
+                ><i class="fas fa-tag"></i> Khuyến mãi</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <!-- Categories -->
+        <div class="footer-column">
+          <h4>Danh mục</h4>
+          <ul class="footer-links">
+            <li>
+              <a href="#"><i class="fas fa-apple-alt"></i> Trái cây Việt Nam</a>
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-gift"></i> Quà tặng trái cây</a>
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-globe"></i> Trái cây nhập khẩu</a>
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-star"></i> Đặc biệt</a>
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-leaf"></i> Hữu cơ</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Contact & Social -->
+        <div class="footer-column">
+          <h4>Liên hệ</h4>
+          <div class="contact-info">
+            <div class="contact-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>123 Đường ABC, Quận 1, TP.HCM</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-phone"></i>
+              <span>0900 123 456</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <span>info@pomegranate.com</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-clock"></i>
+              <span>8:00 - 22:00 (T2 - CN)</span>
+            </div>
+          </div>
+
+          <h4 style="margin-top: 25px">Theo dõi chúng tôi</h4>
+          <div class="social-grid">
+            <a href="#" class="social-card"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="#" class="social-card"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-card"><i class="fab fa-tiktok"></i></a>
+            <a href="#" class="social-card"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="social-card"><i class="fab fa-zalo"></i></a>
+            <a href="#" class="social-card"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <div class="copyright">
+            &copy; 2024 Pomegranate. All rights reserved.
+          </div>
+          <div class="footer-legal">
+            <a href="../pages/privacy.html">Chính sách bảo mật</a>
+            <a href="../pages/terms.html">Điều khoản sử dụng</a>
+            <a href="../pages/return.html">Chính sách đổi trả</a>
+          </div>
+          <div class="payment-methods">
+            <span class="payment-text">Chấp nhận thanh toán:</span>
+            <div class="payment-icon">VISA</div>
+            <div class="payment-icon">MC</div>
+            <div class="payment-icon">COD</div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
     <script src="../js/search.js" defer></script>
     <script src="../js/mainjs.js" defer></script>
     <script>
