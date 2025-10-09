@@ -126,6 +126,34 @@ App.Auth = {
     if (emailForm) {
       this.setupCustomerAuth(emailForm);
     }
+
+    // === THÊM PHẦN NÀY: Gắn sự kiện cho nút logout ===
+    this.setupLogoutHandler();
+  },
+
+  // === THÊM HÀM NÀY ===
+  setupLogoutHandler() {
+    // Gắn sự kiện khi DOM loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      const logoutBtn = document.querySelector(".logout-btn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.logout();
+        });
+      }
+    });
+
+    // Hoặc gắn trực tiếp nếu element đã tồn tại
+    const logoutBtn = document.querySelector(".logout-btn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.logout();
+      });
+    }
   },
 
   handleAdminLogin(e) {
@@ -211,16 +239,27 @@ App.Auth = {
         localStorage.setItem("currentUserEmail", email);
         localStorage.setItem("currentUserRole", "customer");
         App.Cart.transferTempCartToUser(email);
-        alert(`Tài khoản mới đã được tạo cho ${email}!`);
-        window.location.href = "../pages/index.html";
+        App.utils.showNotification(`Tài khoản đã được tạo thành công`);
+
+        setTimeout(() => {
+          window.location.href = "../pages/index.html";
+        }, 1000);
       } else {
         if (users[email].password === password) {
           localStorage.setItem("currentUser", users[email].name);
           localStorage.setItem("currentUserEmail", email);
           localStorage.setItem("currentUserRole", "customer");
           App.Cart.transferTempCartToUser(email);
-          alert(`Chào mừng trở lại, ${users[email].name}!`);
-          window.location.href = "../pages/index.html";
+
+          // === THÊM THÔNG BÁO VÀ SETTIMEOUT ===
+          App.utils.showNotification(
+            `Chào mừng trở lại, ${users[email].name}!`
+          );
+
+          // Chờ 1.5 giây rồi chuyển hướng
+          setTimeout(() => {
+            window.location.href = "../pages/index.html";
+          }, 1000);
         } else {
           alert("Sai mật khẩu, vui lòng thử lại.");
         }
@@ -232,8 +271,15 @@ App.Auth = {
     localStorage.removeItem("currentUser");
     localStorage.removeItem("currentUserEmail");
     localStorage.removeItem("currentUserRole");
+    localStorage.removeItem("adminUser");
+    localStorage.removeItem("adminEmail");
+
     App.utils.showNotification("Đã đăng xuất!");
-    window.location.href = "login.html";
+
+    // Chuyển hướng về trang chủ
+    setTimeout(() => {
+      window.location.href = "../pages/index.html";
+    }, 500);
   },
 
   handleSocialLogin(provider) {
